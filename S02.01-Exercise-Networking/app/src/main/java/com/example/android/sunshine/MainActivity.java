@@ -89,8 +89,17 @@ public class MainActivity extends AppCompatActivity {
         new getWeatherTask().execute(location);
     }
     // TODO (5) Create a class that extends AsyncTask to perform network requests
+    //	android.os.AsyncTask<Params, Progress, Result>
     public class getWeatherTask extends AsyncTask<String, Void, String[]> {
-
+    /*AsyncTask must be subclassed to be used. The subclass will override
+    at least one method (doInBackground(Params...)),
+    and most often will override a second one (onPostExecute(Result).
+    *AsyncTask is designed to be a helper class around Thread and Handler and does not constitute a generic threading framework.
+    * AsyncTasks should ideally be used for short operations (a few seconds at the most.) If you need to keep threads running for
+    * long periods of time,
+    * it is highly recommended you use the various APIs provided by the java.util.concurrent package such as Executor,
+    * ThreadPoolExecutor and FutureTask.
+    **/
         @Override
         protected String[] doInBackground(String... params) {
             // TODO (6) Override the doInBackground method to perform your network requests
@@ -100,18 +109,24 @@ public class MainActivity extends AppCompatActivity {
                 return null;
             }
             String location = params[0];
-
-            URL weatherRequestUrl = NetworkUtils.buildUrl(location);
+            //URL
+            URL requestURL = NetworkUtils.buildUrl(location);
 
             try {
-                String jsonWeatherResponse = NetworkUtils.getResponseFromHttpUrl(weatherRequestUrl);
 
-                String[] simpleJsonWeatherData = OpenWeatherJsonUtils.getSimpleWeatherStringsFromJson(MainActivity.this, jsonWeatherResponse);
+                //jsonWeatherResponse: returns entire result to string then
+                String jsonWeatherResponse = NetworkUtils.getResponseFromHttpUrl(requestURL);
+                //class and method parses json response
+                String[] simpleJsonWeatherData = OpenWeatherJsonUtils.getSimpleWeatherStringsFromJson(
+                        MainActivity.this
+                        , jsonWeatherResponse);
 
                 return simpleJsonWeatherData;
 
             } catch (Exception e) {
+
                 e.printStackTrace();
+
                 return null;
             }
         }
@@ -126,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
                  * TextView. Later, we'll learn about a better way to display lists of data.
                  */
                 for (String weatherString : weather_data) {
+
                     mWeatherTextView.append((weatherString) + "\n\n\n");
                 }
             }
